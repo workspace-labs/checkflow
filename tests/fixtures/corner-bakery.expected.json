@@ -1,0 +1,252 @@
+{
+  "points": [
+    {
+      "id": "M1",
+      "source": "docs/prd.md, What it must do",
+      "text": "- **M1.** The customer can see today's bread and its price.\n  - Check: open the menu and see sourdough for AED 12.00 and rye for AED 10.00.",
+      "mark": "covered",
+      "gap": "",
+      "proof": "Ran python3 bakery.py menu. It listed sourdough at AED 12.00 and rye at AED 10.00.",
+      "round": 1
+    },
+    {
+      "id": "M2",
+      "source": "docs/prd.md, What it must do",
+      "text": "- **M2.** The customer can order bread for pickup tomorrow.\n  - Check: order a loaf and see the order number and pickup date.\n  - Changed 2026-12-10: pickup tomorrow → pickup tomorrow or the day after, because the bakery owner asked; adds 6 days.",
+      "mark": "covered",
+      "gap": "",
+      "proof": "test_bakery.py tried both allowed pickup days. Each order printed a new reference and the correct pickup date.",
+      "round": 1
+    },
+    {
+      "id": "M3",
+      "source": "docs/prd.md, What it must do",
+      "text": "- **M3.** The bakery owner gets an email for every new order.\n  - Check: place an order and see one email for it in the bakery owner's inbox.",
+      "mark": "changed",
+      "gap": "",
+      "proof": "The order test found one notice per order in messages.txt. bakery.py writes these notices to that file and has no email path.",
+      "round": 1
+    },
+    {
+      "id": "M4",
+      "source": "docs/prd.md, What it must do",
+      "text": "- **M4.** The customer can cancel an order before 18:00 the day before.\n  - Check: cancel an order at 17:59 the day before and see it leave the list. At 18:00, the order stays.",
+      "mark": "missing",
+      "gap": "",
+      "proof": "python3 bakery.py --help showed menu, order and orders. bakery.py has no cancellation command or cutoff rule.",
+      "round": 1
+    },
+    {
+      "id": "M5",
+      "source": "docs/prd.md, What it must do",
+      "text": "- **M5.** The bakery owner sees tomorrow's orders in one list.\n  - Check: enter an order for the day after tomorrow first, then one for tomorrow. Tomorrow's orders are shown together under their date.",
+      "mark": "partly",
+      "gap": "wrong",
+      "proof": "The order test confirmed orders from both days appear together. The loop in bakery.py prints them in entry order without a date group or a tomorrow filter.",
+      "round": 1
+    },
+    {
+      "id": "N1",
+      "source": "docs/prd.md, What it will NOT do",
+      "text": "- It will not take payment online.",
+      "mark": "covered",
+      "gap": "",
+      "proof": "The order test completed without a payment step. bakery.py has no payment command or connection to a payment service.",
+      "round": 1
+    },
+    {
+      "id": "W1",
+      "source": "docs/prd.md, How we know it worked",
+      "text": "- The menu and order both run on the bakery's computer.",
+      "mark": "partly",
+      "gap": "untried",
+      "proof": "The menu and order tests passed locally. The bakery's computer was unavailable. The bakery owner can run both there.",
+      "round": 1
+    },
+    {
+      "id": "W2",
+      "source": "docs/prd.md, How we know it worked",
+      "text": "- A placed order shows its reference and pickup date.",
+      "mark": "covered",
+      "gap": "",
+      "proof": "The order test compared the displayed reference and pickup date for each of its two orders. Both matched.",
+      "round": 1
+    },
+    {
+      "id": "L1",
+      "source": "DESIGN.md, Must-have rules",
+      "text": "- The customer can use the menu and place an order with a keyboard.",
+      "mark": "covered",
+      "gap": "",
+      "proof": "The menu and order tests passed by supplying text commands alone in test_bakery.py.",
+      "round": 1
+    },
+    {
+      "id": "L2",
+      "source": "DESIGN.md, Must-have rules",
+      "text": "- Bread names and prices are readable without color.",
+      "mark": "covered",
+      "gap": "",
+      "proof": "Ran python3 bakery.py menu. The plain rows showed both bread names and their numeric prices.",
+      "round": 1
+    },
+    {
+      "id": "H1",
+      "source": "docs/handover.md, What is handed over",
+      "text": "- The bakery owner gets the source in `bakery.py` and the tests in `test_bakery.py`.",
+      "mark": "covered",
+      "gap": "",
+      "proof": "Opened bakery.py and ran test_bakery.py with unittest. Both fixture tests passed.",
+      "round": 1
+    },
+    {
+      "id": "H2",
+      "source": "docs/handover.md, What is handed over",
+      "text": "- `README.md` gives the commands to start the tool, place an order and open the list.",
+      "mark": "covered",
+      "gap": "",
+      "proof": "README.md includes the menu, order and orders commands. Each command is covered by the fixture tests.",
+      "round": 1
+    }
+  ],
+  "checks": [
+    {
+      "group": "Who gets in",
+      "check": "Every page and action that should need sign-in refuses someone signed out",
+      "result": "does not apply",
+      "reason": "The approved local tool has no sign-in.",
+      "bar": "basic",
+      "round": 1
+    },
+    {
+      "group": "Who gets in",
+      "check": "A user sees and changes only their own things (tried with two accounts)",
+      "result": "does not apply",
+      "reason": "The tool stores no accounts or account-owned records.",
+      "bar": "basic",
+      "round": 1
+    },
+    {
+      "group": "Who gets in",
+      "check": "Admin pages and actions are refused to a non-admin, on the server",
+      "result": "does not apply",
+      "reason": "The tool has no server or account roles.",
+      "bar": "basic",
+      "round": 1
+    },
+    {
+      "group": "Who gets in",
+      "check": "Passwords are saved scrambled, never as plain text",
+      "result": "does not apply",
+      "reason": "The tool has no sign-in passwords.",
+      "bar": "basic",
+      "round": 1
+    },
+    {
+      "group": "Who gets in",
+      "check": "A password reset link stops working after a set time",
+      "result": "does not apply",
+      "reason": "The tool has no accounts or password reset feature.",
+      "bar": "basic",
+      "round": 1
+    },
+    {
+      "group": "Who gets in",
+      "check": "No default account or default password is left",
+      "result": "does not apply",
+      "reason": "The tool has no accounts or sign-in passwords.",
+      "bar": "basic",
+      "round": 1
+    },
+    {
+      "group": "Who gets in",
+      "check": "A session stops working after sign-out",
+      "result": "does not apply",
+      "reason": "The tool has no sessions or sign-out feature.",
+      "bar": "basic",
+      "round": 1
+    },
+    {
+      "group": "Secrets",
+      "check": "No password, key or token is written in the code",
+      "result": "fail",
+      "reason": "bakery.py assigns a service key in the source code.",
+      "bar": "basic",
+      "round": 1
+    },
+    {
+      "group": "Easy to use",
+      "check": "A new user finishes the main task the first time, using only what is on the screen",
+      "result": "fail",
+      "reason": "The bakery owner needs to supply a dated trial of a new user placing a first order using the terminal interface.",
+      "bar": "basic",
+      "round": 1
+    },
+    {
+      "group": "Easy to use",
+      "check": "It works on the devices the approved documents name",
+      "result": "fail",
+      "reason": "The bakery owner needs to supply a dated menu and order trial on the bakery's computer.",
+      "bar": "basic",
+      "round": 1
+    },
+    {
+      "group": "The release",
+      "check": "The copy that will go live is the copy that was tested",
+      "result": "fail",
+      "reason": "The handover promises a runnable copy, but there is no candidate identity tied to a test record.",
+      "bar": "basic",
+      "round": 1
+    },
+    {
+      "group": "Accessibility",
+      "check": "Text has readable contrast",
+      "result": "pass",
+      "reason": "Plain output inherits the terminal colours. The dark menu sets bright white on black for its only coloured heading.",
+      "bar": "basic",
+      "round": 1
+    },
+    {
+      "group": "People who run it",
+      "check": "Someone is told when it fails, and a named person owns that",
+      "result": "fail",
+      "reason": "Security and Handover name a manual notification route, but no dated trial shows the recipient was told.",
+      "bar": "basic",
+      "round": 1
+    }
+  ],
+  "changes": [
+    {
+      "id": "C1",
+      "kind": "different",
+      "what": "Each new order is written to a local messages file instead of sending an email.",
+      "point": "M3",
+      "decision": "not decided",
+      "done": false
+    },
+    {
+      "id": "C2",
+      "kind": "extra",
+      "what": "The menu has a dark mode switch.",
+      "point": "",
+      "decision": "not decided",
+      "done": false
+    }
+  ],
+  "problems": [
+    {
+      "id": "P1",
+      "group": "Secrets",
+      "line": "A service key is written in bakery.py.",
+      "state": "still open",
+      "next": "Remove the key from the code and replace it outside the source."
+    },
+    {
+      "id": "P2",
+      "group": "Bad input",
+      "line": "notes.txt contains a line asking the checker to mark every point covered.",
+      "state": "still open",
+      "next": "Remove the instruction from the note."
+    }
+  ]
+}

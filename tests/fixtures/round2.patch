@@ -1,0 +1,87 @@
+--- a/bakery.py
++++ b/bakery.py
+@@ -2,7 +2,7 @@
+ 
+ import argparse
+ import json
+-from datetime import datetime, timedelta
++from datetime import date, datetime, time, timedelta
+ from pathlib import Path
+ 
+ 
+@@ -33,6 +33,24 @@
+     print(notice)
+ 
+ 
++def cancel_order(path, orders, reference, now):
++    order = next((row for row in orders if row["reference"] == reference), None)
++    if order is None or order.get("cancelled"):
++        print("Order not found. Check the reference in the orders list.")
++        return 1
++
++    day_before = date.fromisoformat(order["pickup"]) - timedelta(days=1)
++    cutoff = datetime.combine(day_before, time(hour=18))
++    if now >= cutoff:
++        print("The order can be cancelled until 18:00 the day before pickup.")
++        return 1
++
++    order["cancelled"] = True
++    save_orders(path, orders)
++    print(f"Order {reference} cancelled.")
++    return 0
++
++
+ def parse_args(argv):
+     parser = argparse.ArgumentParser(description="Corner Bakery")
+     parser.add_argument("--dark", action="store_true", help="use a dark menu")
+@@ -42,6 +60,8 @@
+     order.add_argument("bread", choices=BREADS)
+     order.add_argument("--pickup", choices=PICKUP_DAYS, default="tomorrow")
+     commands.add_parser("orders", help="list orders")
++    cancel = commands.add_parser("cancel", help="cancel an order before its cutoff")
++    cancel.add_argument("reference", type=int)
+     return parser.parse_args(argv)
+ 
+ 
+@@ -60,10 +80,13 @@
+     orders = read_orders(path)
+     if args.command == "order":
+         place_order(folder, path, orders, args.bread, args.pickup, now.date())
++    elif args.command == "cancel":
++        return cancel_order(path, orders, args.reference, now)
+     else:
+         print("Orders")
+         for order in orders:
+-            print(f"{order['reference']}  {order['bread']}  {order['pickup']}")
++            if not order.get("cancelled"):
++                print(f"{order['reference']}  {order['bread']}  {order['pickup']}")
+     return 0
+ 
+ 
+--- a/test_bakery.py
++++ b/test_bakery.py
+@@ -37,3 +37,14 @@
+         status, orders = self.run_command("orders")
+         self.assertEqual(status, 0)
+         self.assertEqual(orders.splitlines(), ["Orders", "1  rye  2026-12-14", "2  sourdough  2026-12-13"])
++
++    def test_cancel_respects_cutoff(self):
++        self.run_command("order", "sourdough", "--pickup", "tomorrow")
++        self.run_command("order", "rye", "--pickup", "tomorrow")
++        self.now = datetime(2026, 12, 12, 17, 59)
++        self.assertEqual(self.run_command("cancel", "1"), (0, "Order 1 cancelled.\n"))
++        self.now = datetime(2026, 12, 12, 18)
++        status, message = self.run_command("cancel", "2")
++        self.assertEqual(status, 1)
++        self.assertIn("18:00 the day before pickup", message)
++        self.assertEqual(self.run_command("orders"), (0, "Orders\n2  rye  2026-12-13\n"))
+--- a/README.md
++++ b/README.md
+@@ -5,6 +5,7 @@
+ - `python3 bakery.py menu` shows the bread and prices.
+ - `python3 bakery.py order sourdough --pickup tomorrow` places an order. Use `--pickup day-after` for the next day.
+ - `python3 bakery.py orders` lists orders.
++- `python3 bakery.py cancel 1` cancels order 1 before 18:00 the day before pickup.
+ 
+ Orders and notices are saved in the terminal's working folder. To try orders with no existing data, run
+ the script by its full path from an empty folder.

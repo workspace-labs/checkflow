@@ -1,0 +1,270 @@
+{
+  "language": "ar",
+  "confirmed": true,
+  "rows": [
+    {
+      "source": "Add pickup for the day after tomorrow.",
+      "text": "إضافة خيار الاستلام بعد غد."
+    },
+    {
+      "source": "The bakery owner",
+      "text": "صاحب المخبز"
+    },
+    {
+      "source": "The bakery owner asked to add a second pickup day.",
+      "text": "طلب صاحب المخبز إضافة يوم ثانٍ للاستلام."
+    },
+    {
+      "source": "The oven supplier's price list arrived late.",
+      "text": "وصلت قائمة أسعار مورّد الفرن متأخرة."
+    },
+    {
+      "source": "The oven supplier",
+      "text": "مورّد الفرن"
+    },
+    {
+      "source": "The price list arrived 9 days late, moving the end by 9 days.",
+      "text": "تأخرت قائمة الأسعار 9 أيام، فتأجل موعد النهاية 9 أيام."
+    },
+    {
+      "source": "Jamie Reed",
+      "text": "جيمي ريد"
+    },
+    {
+      "source": "The customer can see today's bread and its price.",
+      "text": "يمكن للزبون الاطلاع على خبز اليوم وسعره."
+    },
+    {
+      "source": "The menu test found sourdough for AED 12.00 and rye for AED 10.00 in bakery.py.",
+      "text": "أظهر اختبار القائمة في bakery.py خبز العجين المخمّر بسعر 12.00 درهمًا إماراتيًا وخبز الجاودار بسعر 10.00 دراهم إماراتية."
+    },
+    {
+      "source": "The customer can order bread for pickup tomorrow or the day after.",
+      "text": "يمكن للزبون طلب الخبز لاستلامه غدًا أو بعد غد."
+    },
+    {
+      "source": "The order test in test_bakery.py printed a reference and date for both pickup days.",
+      "text": "طبع اختبار الطلب في test_bakery.py رقم الطلب وتاريخ الاستلام لكلٍّ من اليومين."
+    },
+    {
+      "source": "The bakery owner gets an email for every new order.",
+      "text": "يتلقى صاحب المخبز رسالة بريد إلكتروني عن كل طلب جديد."
+    },
+    {
+      "source": "The order test found one saved notice per new order in messages.txt.",
+      "text": "وجد اختبار الطلب إشعارًا واحدًا محفوظًا لكل طلب جديد في messages.txt."
+    },
+    {
+      "source": "The customer can cancel an order before 18:00 the day before.",
+      "text": "يمكن للزبون إلغاء الطلب قبل الساعة 18:00 في اليوم السابق للاستلام."
+    },
+    {
+      "source": "The cancellation test in test_bakery.py removed the order at 17:59 and kept it at 18:00.",
+      "text": "أزال اختبار الإلغاء في test_bakery.py الطلب عند الساعة 17:59 وأبقاه عند الساعة 18:00."
+    },
+    {
+      "source": "The bakery owner sees tomorrow's orders in one list.",
+      "text": "يرى صاحب المخبز طلبات الغد في قائمة واحدة."
+    },
+    {
+      "source": "The list test in test_bakery.py showed earlier pickup dates first, grouped by date.",
+      "text": "عرض اختبار القائمة في test_bakery.py الطلبات مجمّعة حسب تاريخ الاستلام وبدأ بالأقدم."
+    },
+    {
+      "source": "It will not take payment online.",
+      "text": "لا تقبل الأداة الدفع عبر الإنترنت."
+    },
+    {
+      "source": "The order test carried out the pickup order without a payment step.",
+      "text": "أتمّ اختبار الطلب طلب الاستلام من دون خطوة دفع."
+    },
+    {
+      "source": "The menu and order both run on the bakery's computer.",
+      "text": "تعمل القائمة والطلبات على حاسوب المخبز."
+    },
+    {
+      "source": "The fixture's menu and order tests ran on the bakery test computer.",
+      "text": "عمل اختبارا القائمة والطلبات على حاسوب الاختبار الخاص بالمخبز."
+    },
+    {
+      "source": "A placed order shows its reference and pickup date.",
+      "text": "يظهر رقم الطلب وتاريخ الاستلام بعد تقديمه."
+    },
+    {
+      "source": "The order test compared each order's reference and pickup date.",
+      "text": "قارن اختبار الطلب رقم كل طلب وتاريخ استلامه."
+    },
+    {
+      "source": "The customer can use the menu and place an order with a keyboard.",
+      "text": "يمكن للزبون تصفّح القائمة وتقديم طلب باستخدام لوحة المفاتيح."
+    },
+    {
+      "source": "The menu and order tests used text commands alone.",
+      "text": "استخدم اختبارا القائمة والطلبات الأوامر النصية فقط."
+    },
+    {
+      "source": "Bread names and prices are readable without color.",
+      "text": "يمكن قراءة أسماء الخبز وأسعاره من دون الاعتماد على اللون."
+    },
+    {
+      "source": "The menu test read the bread names and prices as plain text.",
+      "text": "قرأ اختبار القائمة أسماء الخبز وأسعاره كنص عادي."
+    },
+    {
+      "source": "The bakery owner gets the source in bakery.py and the tests in test_bakery.py.",
+      "text": "يتسلّم صاحب المخبز الشيفرة في bakery.py والاختبارات في test_bakery.py."
+    },
+    {
+      "source": "The source is in bakery.py and the three tests in test_bakery.py passed.",
+      "text": "الشيفرة في bakery.py وقد نجحت الاختبارات الثلاثة في test_bakery.py."
+    },
+    {
+      "source": "README.md gives the commands to start the tool, place an order and open the list.",
+      "text": "يوضّح ملف README.md أوامر تشغيل الأداة وتقديم طلب وفتح القائمة."
+    },
+    {
+      "source": "README.md lists the commands to start the tool, place an order and open the list.",
+      "text": "يسرد ملف README.md أوامر تشغيل الأداة وتقديم طلب وفتح القائمة."
+    },
+    {
+      "source": "Each new order writes a notice to messages.txt.",
+      "text": "يُسجّل كل طلب جديد إشعارًا في messages.txt."
+    },
+    {
+      "source": "The bakery owner receives it and signs the handover.",
+      "text": "يتسلّم صاحب المخبز الأداة ويوقّع على التسليم."
+    },
+    {
+      "source": "The bakery owner tells customers at the counter.",
+      "text": "يُبلغ صاحب المخبز الزبائن عند المنضدة."
+    },
+    {
+      "source": "The bakery keeps the paper list for the first week.",
+      "text": "يحتفظ المخبز بالقائمة الورقية خلال الأسبوع الأول."
+    },
+    {
+      "source": "The bakery owner starts it from the terminal.",
+      "text": "يشغّل صاحب المخبز الأداة من الطرفية."
+    },
+    {
+      "source": "The bakery owner tells the builder about faults.",
+      "text": "يُبلغ صاحب المخبز المنفّذ بالأعطال."
+    },
+    {
+      "source": "A small bread menu and pickup order tool.",
+      "text": "أداة بسيطة لعرض قائمة الخبز وطلبه للاستلام."
+    },
+    {
+      "source": "Customers can see what is available and book pickup before coming to the shop.",
+      "text": "يمكن للزبائن الاطلاع على الخبز المتوفر وحجز موعد للاستلام قبل المجيء إلى المخبز."
+    },
+    {
+      "source": "Delivery.",
+      "text": "التوصيل."
+    },
+    {
+      "source": "Corner Bakery",
+      "text": "مخبز الزاوية"
+    },
+    {
+      "source": "The tool saves orders in orders.json. It needs no names or contact details.",
+      "text": "تحفظ الأداة الطلبات في orders.json ولا تحتاج إلى أسماء أو معلومات اتصال."
+    },
+    {
+      "source": "Orders (orders)",
+      "text": "الطلبات (orders)"
+    },
+    {
+      "source": "One row is one pickup order.",
+      "text": "يمثّل كل صف طلب استلام واحدًا."
+    },
+    {
+      "source": "Order number",
+      "text": "رقم الطلب"
+    },
+    {
+      "source": "Bread name",
+      "text": "اسم الخبز"
+    },
+    {
+      "source": "Pickup date",
+      "text": "تاريخ الاستلام"
+    },
+    {
+      "source": "Whether the order was cancelled",
+      "text": "ما إذا أُلغي الطلب"
+    },
+    {
+      "source": "Who can see it: anyone using the bakery computer.",
+      "text": "من يمكنه الاطلاع عليها: كل من يستخدم حاسوب المخبز."
+    },
+    {
+      "source": "How long it's kept: until the owner closes the pickup list for the week.",
+      "text": "مدة الاحتفاظ: إلى أن يغلق صاحب المخبز قائمة استلام طلبات الأسبوع."
+    },
+    {
+      "source": "Required: reference, bread, pickup",
+      "text": "الحقول المطلوبة: المرجع والخبز والاستلام."
+    },
+    {
+      "source": "Unique: reference",
+      "text": "الحقل الفريد: المرجع."
+    },
+    {
+      "source": "Removal: the bakery owner removes old orders.",
+      "text": "الحذف: يزيل صاحب المخبز الطلبات القديمة."
+    },
+    {
+      "source": "There is one list.",
+      "text": "توجد قائمة واحدة."
+    },
+    {
+      "source": "The mock order-notice setting was removed from bakery.py.",
+      "text": "أُزيل الإعداد التجريبي لإشعارات الطلبات من bakery.py."
+    },
+    {
+      "source": "Assumption: the bakery uses a computer with a terminal.",
+      "text": "افتراض: يستخدم المخبز حاسوبًا مزوّدًا بطرفية."
+    },
+    {
+      "source": "Risk: the oven supplier may send its price list late.",
+      "text": "خطر: قد يتأخر مورّد الفرن في إرسال قائمة الأسعار."
+    },
+    {
+      "source": "Run on the bakery's computer.",
+      "text": "تعمل الأداة على حاسوب المخبز."
+    },
+    {
+      "source": "Terminal commands and plain text.",
+      "text": "أوامر في الطرفية ونص عادي."
+    },
+    {
+      "source": "Python 3.9 or newer. The menu and orders use the standard library.",
+      "text": "يُستخدم Python 3.9 أو أحدث. تعتمد القائمة والطلبات على المكتبة القياسية."
+    },
+    {
+      "source": "Orders are saved in a local file. See Data for the fields.",
+      "text": "تُحفظ الطلبات في ملف محلي. راجع وثيقة البيانات للاطلاع على الحقول."
+    },
+    {
+      "source": "A folder on the bakery's computer.",
+      "text": "مجلد على حاسوب المخبز."
+    },
+    {
+      "source": "Anyone using the bakery computer can open the tool. The tool has no sign-in.",
+      "text": "يمكن لأي شخص يستخدم حاسوب المخبز فتح الأداة. لا تتطلب الأداة تسجيل دخول."
+    },
+    {
+      "source": "An email service sends one notice per order.",
+      "text": "ترسل خدمة البريد الإلكتروني إشعارًا واحدًا لكل طلب."
+    },
+    {
+      "source": "The email service receives the order reference and pickup date.",
+      "text": "تتلقى خدمة البريد الإلكتروني رقم الطلب وتاريخ الاستلام."
+    },
+    {
+      "source": "If this copy is lost: the bakery owner re-enters open orders from the paper list.",
+      "text": "إذا فُقدت هذه النسخة، يعيد صاحب المخبز إدخال الطلبات المفتوحة من القائمة الورقية."
+    }
+  ]
+}

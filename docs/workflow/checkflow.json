@@ -1,0 +1,106 @@
+{
+  "project": {
+    "name": "checkflow",
+    "summary": "A skill for the moment after a project is built and before it is deployed. It checks everything the client asked for against the documents the client approved, checks the project itself, then makes the documents the client receives. It never fixes code, deploys, or signs for the client.",
+    "actors": [
+      {"name": "You", "role": "Owns the project. Decides every change and sends the documents."},
+      {"name": "The checker", "role": "The agent that runs checkflow. Checks and writes, never fixes."},
+      {"name": "The builder", "role": "The agent that built the project. Fixes the gaps."},
+      {"name": "The client", "role": "Approved the documents. Receives the result and accepts it."}
+    ],
+    "version": "0.1",
+    "assumptions": [
+      "The approved documents are the ones the project-docs skill writes.",
+      "The check of the project itself has ten groups, and a group that does not fit is marked does not apply.",
+      "A basic bar is always checked. A higher bar is checked only when the approved documents ask for it.",
+      "Every document comes as a PDF and an HTML page, built from one source.",
+      "The documents follow the project's own DESIGN.md on a fixed formal skeleton.",
+      "The technical document is always made. You choose whether to send it."
+    ],
+    "open_questions": [
+      "Who runs the check when the builder's session is still open? Starting plan: a fresh helper agent.",
+      "Does the order of the pages stay fixed for every project?",
+      "You had one more idea to add and it has not come back yet."
+    ]
+  },
+  "parts": [
+    {
+      "title": "Read what was approved",
+      "summary": "The checker finds the documents the client approved. With none, it refuses.",
+      "lanes": ["You", "The checker"],
+      "nodes": [
+        {"id": "start", "type": "start", "lane": "You", "title": "The build is finished"},
+        {"id": "ask", "type": "step", "lane": "You", "title": "Asks for the check"},
+        {"id": "find", "type": "step", "lane": "The checker", "title": "Looks for the approved documents", "result": "The documents found"},
+        {"id": "have", "type": "decision", "lane": "The checker", "title": "Approved documents?",
+         "branches": [{"label": "Yes", "to": "lang"}, {"label": "No", "to": "refuse"}]},
+        {"id": "refuse", "type": "stop", "lane": "The checker", "title": "Refuses", "detail": "says why"},
+        {"id": "lang", "type": "step", "lane": "The checker", "title": "Asks the language", "detail": "Arabic, English or both"},
+        {"id": "answer", "type": "step", "lane": "You", "title": "Picks the language", "result": "The language"},
+        {"id": "list", "type": "step", "lane": "The checker", "title": "Lists every client point", "detail": "from the documents only", "result": "The list of points"},
+        {"id": "ready", "type": "end", "lane": "The checker", "title": "Ready to check", "to_part": 2}
+      ]
+    },
+    {
+      "title": "Check what the client asked",
+      "summary": "Every approved point, one by one, with proof.",
+      "lanes": ["The checker"],
+      "nodes": [
+        {"id": "start", "type": "start", "lane": "The checker", "title": "Ready to check"},
+        {"id": "walk", "type": "step", "lane": "The checker", "title": "Walks every point", "detail": "is it there, does it work"},
+        {"id": "mark", "type": "step", "lane": "The checker", "title": "Marks each point", "detail": "covered, partly, missing or changed", "result": "A mark and a proof for every point"},
+        {"id": "extra", "type": "step", "lane": "The checker", "title": "Looks for extras", "detail": "built but never asked", "result": "The list of extras"},
+        {"id": "aim", "type": "step", "lane": "The checker", "title": "Checks the first aim", "detail": "why the client wanted it", "result": "Part one of the check"},
+        {"id": "done", "type": "end", "lane": "The checker", "title": "Client points checked", "to_part": 3}
+      ]
+    },
+    {
+      "title": "Check the project itself",
+      "summary": "Ten groups: is the project safe and ready to deploy?",
+      "lanes": ["The checker"],
+      "nodes": [
+        {"id": "start", "type": "start", "lane": "The checker", "title": "Client points checked"},
+        {"id": "ten", "type": "step", "lane": "The checker", "title": "Checks the ten groups", "detail": "the basic bar, always"},
+        {"id": "skip", "type": "step", "lane": "The checker", "title": "Marks what does not apply", "detail": "with the reason"},
+        {"id": "more", "type": "decision", "lane": "The checker", "title": "Basic bar enough?",
+         "branches": [{"label": "Yes", "to": "write"}, {"label": "No", "to": "higher"}]},
+        {"id": "higher", "type": "step", "lane": "The checker", "title": "Checks the higher bar", "detail": "the one the documents ask for"},
+        {"id": "write", "type": "step", "lane": "The checker", "title": "Writes the full check", "detail": "names the bar it used", "result": "The full check"},
+        {"id": "done", "type": "end", "lane": "The checker", "title": "Full check ready", "to_part": 4}
+      ]
+    },
+    {
+      "title": "Fix and check again",
+      "summary": "Gaps go back to the builder. The checker checks again until it is clean.",
+      "lanes": ["You", "The checker", "The builder"],
+      "nodes": [
+        {"id": "start", "type": "start", "lane": "The checker", "title": "Full check ready"},
+        {"id": "hand", "type": "step", "lane": "The checker", "title": "Hands you the full check", "result": "The full check, for you"},
+        {"id": "clean", "type": "decision", "lane": "You", "title": "All clean?",
+         "branches": [{"label": "Yes", "to": "ready"}, {"label": "No", "to": "decide"}, {"label": "Stop", "to": "stopped"}]},
+        {"id": "stopped", "type": "stop", "lane": "You", "title": "Stopped by you", "detail": "nothing is delivered"},
+        {"id": "decide", "type": "step", "lane": "You", "title": "Decides each change", "detail": "fix it back, or keep it", "result": "Your decisions"},
+        {"id": "fix", "type": "step", "lane": "The builder", "title": "Fixes the gaps", "result": "A fixed project"},
+        {"id": "again", "type": "step", "lane": "The checker", "title": "Checks again", "next": "hand"},
+        {"id": "ready", "type": "end", "lane": "You", "title": "Clean", "to_part": 5}
+      ]
+    },
+    {
+      "title": "Make the documents",
+      "summary": "Two documents in the project's own look, each as a PDF and an HTML page.",
+      "lanes": ["You", "The checker", "The client"],
+      "nodes": [
+        {"id": "start", "type": "start", "lane": "The checker", "title": "Clean"},
+        {"id": "design", "type": "step", "lane": "The checker", "title": "Reads the DESIGN.md", "detail": "colours, fonts, shapes", "result": "The look"},
+        {"id": "client", "type": "step", "lane": "The checker", "title": "Builds the project document", "detail": "asked, got, changed", "result": "PDF and HTML"},
+        {"id": "tech", "type": "step", "lane": "The checker", "title": "Builds the technical document", "detail": "no passwords inside", "result": "PDF and HTML"},
+        {"id": "look", "type": "step", "lane": "The checker", "title": "Looks at every page"},
+        {"id": "ok", "type": "decision", "lane": "You", "title": "Right?",
+         "branches": [{"label": "Yes", "to": "send"}, {"label": "No", "to": "change"}]},
+        {"id": "change", "type": "step", "lane": "The checker", "title": "Changes them", "next": "look"},
+        {"id": "send", "type": "step", "lane": "You", "title": "Sends them", "result": "The documents, sent"},
+        {"id": "accept", "type": "end", "lane": "The client", "title": "The client accepts", "detail": "the client's own act"}
+      ]
+    }
+  ]
+}
