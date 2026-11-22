@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0 — 2026-11-22
+
+- Place checkflow third in the whole-project workflow, after project-docs approval and the build from approved documents and the plan. Deployment and handover wait for a clean check.
+
 ## 0.1.2 — 2026-11-22
 
 - The shared path check now refuses absolute paths outside the project.

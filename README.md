@@ -12,7 +12,7 @@ The checkflow tool starts the check, validates the results file, writes the
 report and draws the documents. checkflow never fixes code, never deploys
 and never signs for the client.
 
-**Version 0.1.2**
+**Version 0.2.0**
 
 ## What you get
 
