@@ -16,7 +16,7 @@ from .pdf_arabic import ArabicParagraph, draw_line, line_width
 from .storage import Refusal
 
 
-def fonts(face, words):
+def fonts(face):
     if face.file is None:
         return "Courier", "Courier-Bold"
     registered = []
@@ -27,7 +27,7 @@ def fonts(face, words):
             try:
                 pdfmetrics.registerFont(TTFont(name, BytesIO(data) if data else str(path)))
             except (OSError, ValueError, IndexError, pdfmetrics.FontError, TTFError):
-                raise Refusal(words["Use a readable, embeddable TrueType font in DESIGN.md."]) from None
+                raise Refusal("Use a readable, embeddable TrueType font in DESIGN.md.") from None
         registered.append(name)
     return tuple(registered)
 
@@ -44,8 +44,8 @@ class Style:
         self.tint = colors.HexColor(theme.tint)
         self.radius = theme.radius * 0.75
         self.space = max(3, min(13, theme.spacing * 0.75))
-        self.body, self.bold = fonts(theme.body, words)
-        self.heading, self.heading_bold = fonts(theme.heading, words)
+        self.body, self.bold = fonts(theme.body)
+        self.heading, self.heading_bold = fonts(theme.heading)
         self.start, self.end = (TA_RIGHT, TA_LEFT) if self.rtl else (TA_LEFT, TA_RIGHT)
 
     def caps(self, value):

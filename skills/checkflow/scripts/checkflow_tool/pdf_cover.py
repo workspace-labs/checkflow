@@ -108,7 +108,7 @@ class Cover:
         self.overflow()
 
     def overflow(self):
-        raise CoverOverflow(self.style.words["The first-page content exceeds the available space."])
+        raise CoverOverflow("The first-page content exceeds the available space.")
 
     def details_height(self, details):
         if self.choice["details_style"] == "list":

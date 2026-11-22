@@ -2,11 +2,14 @@
 
 import importlib.util
 import json
+import os
 import shutil
+import subprocess
+import sys
 import unicodedata
 import unittest
 
-from checkflow_case import FIXTURES, NEEDS_POPPLER, POPPLER
+from checkflow_case import CLI, FIXTURES, NEEDS_POPPLER, POPPLER, ROOT
 from test_project_document import DocumentCase
 
 
@@ -92,15 +95,47 @@ class TranslationReviewTests(DocumentCase):
 
     @unittest.skipUnless(importlib.util.find_spec("reportlab"), "ReportLab is required to draw.")
     def test_draft_arabic_preview_fits_every_frame_after_choosing(self):
+        launcher = """
+import json
+from pathlib import Path
+import runpy
+import sys
+
+record_path, script = map(Path, sys.argv[1:3])
+sys.argv = sys.argv[2:]
+sys.path.insert(0, str(script.parent))
+from checkflow_tool import pdf_document
+
+covers = []
+draw_cover = pdf_document.draw_cover
+
+def record_cover(page, model, style, choice, page_numbers, label=None):
+    draw_cover(page, model, style, choice, page_numbers, label)
+    covers.append([label, model.detail_values.get("status")])
+
+pdf_document.draw_cover = record_cover
+try:
+    runpy.run_path(str(script), run_name="__main__")
+finally:
+    record_path.write_text(json.dumps(covers), encoding="utf-8")
+"""
         self.clean()
         self.choose("both")
         self.success("translate", flags=self.language)
         self.fill_draft()
-        for extra in (("--frame", "register"), ("--frame", "band"), ("--frame", "side"), ("--details", "")):
+        cases = (("--frame", "register"), ("--frame", "band"), ("--frame", "side"), ("--details", ""))
+        for number, extra in enumerate(cases, 1):
             with self.subTest(extra=extra):
-                self.success("preview", flags=(*self.language, *extra))
-                if POPPLER:
-                    pages = self.pdf_pages("first-page-preview")
-                    self.assertEqual(len(pages), 3)
-                    for page in pages:
-                        self.assertIn("مسودة", unicodedata.normalize("NFKC", page))
+                record_path = self.scratch / f"draft-covers-{number}.json"
+                run = subprocess.run(
+                    [sys.executable, "-B", "-c", launcher, str(record_path), str(CLI),
+                     "preview", str(self.project), *self.language, *extra],
+                    cwd=ROOT, capture_output=True, encoding="utf-8", timeout=30,
+                    env={**os.environ, "PYTHONUTF8": "1", "PYTHONPATH": ""},
+                )
+                self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+                covers = json.loads(record_path.read_text(encoding="utf-8"))
+                self.assertEqual(len(covers), 3)
+                for page, (label, status) in enumerate(covers, 1):
+                    self.assertIn("مسودة ترجمة", label or "", f"Missing draft mark on page {page}")
+                    self.assertEqual(status, ["الحالة", "مسودة ترجمة"])

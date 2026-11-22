@@ -152,12 +152,12 @@ def font_has_secret(blob, values):
     )
 
 
-def font_data(path, family, values, words):
+def font_data(path, family, values):
     if path.stat().st_size > MAX_FONT_BYTES:
         return None
     blob = path.read_bytes()
     if font_has_secret(blob, values):
-        raise Refusal(words["Remove the known secret from the project font and replace the secret."])
+        raise Refusal("Remove the known secret from the project font and replace the secret.")
     if not embedding_allowed(blob):
         return None
     # ReportLab is loaded only when the renderer needs a project font.
@@ -187,7 +187,7 @@ def font_licence(directory, family):
     return False
 
 
-def local_font(project, name, values, words):
+def local_font(project, name, values):
     family = font_key(name)
     if not family:
         return None
@@ -206,11 +206,11 @@ def local_font(project, name, values, words):
         regular = candidates.get(f"{family}regular", candidates.get(family))
         if not regular or not font_licence(directory, family):
             continue
-        regular_data = font_data(regular, family, values, words)
+        regular_data = font_data(regular, family, values)
         if regular_data is None:
             continue
         bold = candidates.get(f"{family}bold")
-        bold_data = font_data(bold, family, values, words) if bold else None
+        bold_data = font_data(bold, family, values) if bold else None
         return FontFace(name, regular, bold if bold_data else None, regular_data, bold_data)
     return None
 
@@ -220,7 +220,7 @@ def select_font(project, tokens, role, values, notices, words):
     if role == "heading" and primary.casefold() in ("monospace", "system monospace"):
         return MONOSPACE
     if primary:
-        face = local_font(project, primary, values, words)
+        face = local_font(project, primary, values)
         if face:
             return face
     label = words["heading" if role == "heading" else "body"]

@@ -236,6 +236,83 @@ class FirstPageChoiceTests(DocumentCase):
 
 
 @unittest.skipUnless(importlib.util.find_spec("reportlab"),
+                     "ReportLab is required to draw the documents.")
+class DocumentOutputAccessTests(DocumentCase):
+    outputs = ("project-document.pdf", "project-document.html",
+               "technical-document.pdf", "technical-document.html")
+
+    def assert_retry_after_denied_output(self, name, *, operation, earlier_writes=0):
+        for output in self.outputs:
+            (self.output / output).write_bytes(f"Previous {output}\n".encode("ascii"))
+        before = snapshot(self.output)
+        launcher = """
+import os
+from pathlib import Path
+import runpy
+import sys
+
+target = Path(sys.argv[1]).resolve()
+operation, earlier_writes = sys.argv[2:4]
+replace = os.replace
+read_bytes = Path.read_bytes
+written = []
+
+def refuse_replace(source, destination):
+    destination = Path(destination)
+    if destination == target:
+        if len(written) != int(earlier_writes):
+            raise AssertionError(f"Unexpected earlier replacements: {written}")
+        raise PermissionError("Simulated output replacement denial")
+    replace(source, destination)
+    if destination.parent == target.parent:
+        written.append(destination.name)
+
+def refuse_read(path):
+    if path == target:
+        raise PermissionError("Simulated output read denial")
+    return read_bytes(path)
+
+if operation == "replace":
+    os.replace = refuse_replace
+else:
+    Path.read_bytes = refuse_read
+sys.argv = sys.argv[4:]
+sys.path.insert(0, str(Path(sys.argv[0]).parent))
+runpy.run_path(sys.argv[0], run_name="__main__")
+"""
+        run = CheckflowCase.run_tool(
+            self, "document", wrapper=("-c", launcher, str(self.output / name),
+                                       operation, str(earlier_writes)),
+        )
+        self.assertEqual(snapshot(self.output), before, "Output bytes or directory contents changed")
+        self.assertEqual(run.returncode, 1, run.stdout + run.stderr)
+        self.assertEqual(run.stdout, "")
+        self.assertRegex(run.stderr, r"^1\. [^\r\n]+\n\Z")
+        self.assertNotIn("Traceback", run.stderr)
+        self.assertIn(f"docs/checkflow/{name}", run.stderr)
+        for fragment in ("close", "permissions", "try again"):
+            self.assertIn(fragment, run.stderr.lower())
+
+        self.success("document")
+        after = snapshot(self.output)
+        self.assertEqual(after.keys(), before.keys())
+        for output in self.outputs:
+            self.assertNotEqual(after[output], before[output])
+
+    def test_document_replacement_denial_names_output_and_restores_earlier_writes(self):
+        self.clean()
+        for earlier_writes in (0, 2):
+            name = self.outputs[earlier_writes]
+            with self.subTest(output=name):
+                self.assert_retry_after_denied_output(name, operation="replace",
+                                                      earlier_writes=earlier_writes)
+
+    def test_document_preflight_read_denial_names_output_before_writing(self):
+        self.clean()
+        self.assert_retry_after_denied_output("technical-document.pdf", operation="read")
+
+
+@unittest.skipUnless(importlib.util.find_spec("reportlab"),
                      "ReportLab is required to draw the preview and document.")
 @unittest.skipUnless(shutil.which("pdftotext"), "Poppler pdftotext is required to read rendered PDF text.")
 class ProjectDocumentTests(DocumentCase):

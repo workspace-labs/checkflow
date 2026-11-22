@@ -150,9 +150,9 @@ def build(model, style, page_start, page_end):
     try:
         document.build(story(model, style))
     except CoverOverflow:
-        raise Refusal(style.words["The first-page content exceeds the available space."]) from None
+        raise Refusal("The first-page content exceeds the available space.") from None
     except LayoutError:
-        raise Refusal(style.words["Shorten the document's oversized text or table row and try again."]) from None
+        raise Refusal("Shorten the document's oversized text or table row and try again.") from None
     return output.getvalue(), document.page, document.headings
 
 

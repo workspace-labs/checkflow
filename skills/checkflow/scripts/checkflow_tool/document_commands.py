@@ -43,12 +43,12 @@ def check_scope(project, data, values):
 def publish(project, expected, outputs, *, readme_present=None):
     # Preflight all files before writing any, and compare inputs again under the lock.
     for name in outputs:
-        project.read(name)
+        project.read_output(name)
     with project.writer():
         if (any(project.read(name) != raw for name, raw in expected.items())
                 or (readme_present is not None and project.path(README).is_file() != readme_present)):
             raise Refusal("Read the latest check, documents and first page, then try again.")
-        originals = {name: project.read(name) for name in outputs}
+        originals = {name: project.read_output(name) for name in outputs}
         written = []
         try:
             for name, content in outputs.items():

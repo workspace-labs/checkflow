@@ -3,13 +3,15 @@
 from collections import Counter
 import importlib.util
 import json
+import os
 import re
 import shutil
 import subprocess
+import sys
 import unicodedata
 import unittest
 
-from checkflow_case import FIXTURES, NEEDS_POPPLER, POPPLER, snapshot
+from checkflow_case import CLI, FIXTURES, NEEDS_POPPLER, POPPLER, ROOT, snapshot
 from clean_bakery import SECURITY_DETAIL
 from test_project_document import CREDIT, SECTIONS, TITLE, DocumentCase, DocumentHtml, normalize
 
@@ -275,3 +277,24 @@ class TranslationCommandTests(DocumentCase):
         self.write_translation(content)
         self.refuse("document", "still in the source language")
         self.refuse("confirm-translation", "still in the source language", flags=self.language)
+
+    @unittest.skipUnless(importlib.util.find_spec("reportlab"), "ReportLab is required to draw.")
+    def test_arabic_preview_overflow_reason_is_readable_in_cp437(self):
+        content = self.translated_fixture()
+        row = next(row for row in content["rows"] if row["source"].startswith("A small"))
+        row["text"] = " ".join([row["text"]] * 12)
+        self.write_translation(content)
+        before = snapshot(self.project)
+
+        result = subprocess.run(
+            [sys.executable, str(CLI), "preview", str(self.project), *self.language],
+            cwd=ROOT, capture_output=True, timeout=30,
+            env={**os.environ, "PYTHONUTF8": "0", "PYTHONPATH": ""},
+        )
+
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertEqual(result.stdout, b"")
+        message = result.stderr.decode("cp437")
+        self.assertNotIn("Traceback", message)
+        self.assertEqual(message.splitlines(), ["1. The first-page content exceeds the available space."])
+        self.assertEqual(snapshot(self.project), before)

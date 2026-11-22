@@ -8,6 +8,9 @@
 - Make the tests read files and PDF text as UTF-8.
 - Skip two Arabic PDF text tests, with a clear reason, when `pdftotext` is not Poppler.
 - Say that the GitHub repository is live.
+- Use plain English refusal reasons for Arabic previews and documents so legacy Windows consoles can display them.
+- Name an inaccessible output file and explain how to retry.
+- Check draft labels on every preview page without a PDF text reader.
 
 ## 0.1.0 — 2026-11-22
 

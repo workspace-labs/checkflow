@@ -15,6 +15,16 @@ class Refusal(Exception):
     """A short instruction for correcting a check."""
 
 
+@contextmanager
+def output_access(name):
+    try:
+        yield
+    except PermissionError:
+        raise Refusal(
+            f"Cannot access {name}. Close it if it is open, check its permissions, and try again."
+        ) from None
+
+
 class Project:
     def __init__(self, folder):
         self.root = Path(folder).resolve()
@@ -37,6 +47,10 @@ class Project:
         if path.exists():
             raise Refusal(f"Use a regular file for {name}.")
         return None
+
+    def read_output(self, name):
+        with output_access(name):
+            return self.read(name)
 
     def read_text(self, name):
         raw = self.read(name)
@@ -77,7 +91,8 @@ class Project:
             try:
                 tmp.write(data)
                 tmp.close()
-                os.replace(temp_path, path)
+                with output_access(name):
+                    os.replace(temp_path, path)
             finally:
                 temp_path.unlink(missing_ok=True)
 
