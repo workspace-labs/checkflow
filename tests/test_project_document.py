@@ -1,5 +1,6 @@
 """Exercise the client-document commands through the public CLI."""
 
+from base64 import b64encode
 import importlib.util
 import json
 import os
@@ -310,6 +311,29 @@ runpy.run_path(sys.argv[0], run_name="__main__")
     def test_document_preflight_read_denial_names_output_before_writing(self):
         self.clean()
         self.assert_retry_after_denied_output("technical-document.pdf", operation="read")
+
+
+@unittest.skipUnless(importlib.util.find_spec("reportlab"),
+                     "ReportLab is required to draw the documents.")
+class ProjectFontTests(DocumentCase):
+    def test_document_embeds_licensed_font_from_project_root(self):
+        self.clean()
+        assets = SKILL / "assets" / "fonts"
+        # Use the bold face as the only project font so its bytes differ from the fallback.
+        project_font = self.project / "Alexandria.ttf"
+        shutil.copyfile(assets / "Alexandria-Bold.ttf", project_font)
+        shutil.copyfile(assets / "OFL-Alexandria.txt", self.project / "OFL-Alexandria.txt")
+        design = self.project / "DESIGN.md"
+        design.write_text(
+            design.read_text(encoding="utf-8").replace("--font-text: monospace;", "--font-text: Alexandria;"),
+            encoding="utf-8",
+        )
+
+        self.success("document")
+        font = b64encode(project_font.read_bytes()).decode("ascii")
+        rule = ("@font-face{font-family:CheckflowBody;font-style:normal;font-weight:400;"
+                f"src:url(data:font/ttf;base64,{font})")
+        self.assertTrue(rule in self.html_text(), "The document did not embed the project-root body font.")
 
 
 @unittest.skipUnless(importlib.util.find_spec("reportlab"),

@@ -32,7 +32,12 @@ class Project:
             raise Refusal("Choose an existing project folder.")
 
     def path(self, name):
-        path = self.root / name
+        requested = Path(name)
+        path = self.root / requested
+        # On Windows, joining can supply the missing root or drive.
+        partially_qualified = bool(requested.anchor) and not requested.is_absolute()
+        if partially_qualified or (path != self.root and self.root not in path.parents):
+            raise Refusal(f"Use a regular path inside the project for {name}.")
         for part in (*path.parents, path):
             if part == self.root or self.root not in part.parents:
                 continue

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2 — 2026-11-22
+
+- The shared path check now refuses absolute paths outside the project.
+
 ## 0.1.1 — 2026-11-22
 
 - Fix the draft Arabic preview, which was refused after choosing a first page. The draft mark now sits in the page label.
