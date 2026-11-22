@@ -11,6 +11,7 @@
 - Use plain English refusal reasons for Arabic previews and documents so legacy Windows consoles can display them.
 - Name an inaccessible output file and explain how to retry.
 - Check draft labels on every preview page without a PDF text reader.
+- Record the Windows 11 test in the README limits.
 
 ## 0.1.0 — 2026-11-22
 

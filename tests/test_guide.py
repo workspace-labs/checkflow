@@ -33,7 +33,7 @@ class GuideTests(CheckflowCase):
         self.assertIn("There may still be bugs.", clean)
         self.assertIn("The tool cannot tell whether a proof is true.", " ".join(clean.split()))
         limits = guide.partition("\n## Limits\n")[2].partition("\n## ")[0]
-        self.assertIn("not tested on windows yet", limits.lower())
+        self.assertIn("other windows versions are not tested", limits.lower())
 
         help_text = subprocess.run(
             [sys.executable, str(CLI), "--help"], cwd=ROOT,

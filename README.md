@@ -264,7 +264,7 @@ Windows. Tests skip when the tool they need is missing.
 ## Limits
 
 - English and Arabic only.
-- Not tested on Windows yet.
+- Tested on Windows 11 with Python 3.12. Other Windows versions are not tested.
 - Not tested on real phones.
 - Only the basic check level is supported. A named higher level is reported
   as unsupported and the verdict is Not clean.
