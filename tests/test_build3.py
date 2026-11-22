@@ -9,7 +9,7 @@ import subprocess
 import unicodedata
 import unittest
 
-from checkflow_case import FIXTURES, snapshot
+from checkflow_case import FIXTURES, NEEDS_POPPLER, POPPLER, snapshot
 from clean_bakery import SECURITY_DETAIL
 from test_project_document import CREDIT, SECTIONS, TITLE, DocumentCase, DocumentHtml, normalize
 
@@ -53,11 +53,11 @@ def arabic_letters(value):
 class PairedDocumentsTests(DocumentCase):
     def test_technical_sections_use_approved_sources_and_keep_only_setting_names(self):
         self.clean()
-        (self.project / ".env.example").write_text("export MAIL_SERVER=fixture_example_Y71g\n")
-        (self.project / ".env.local").write_text("MAIL_PASSWORD=fixture_local_N30m\n")
+        (self.project / ".env.example").write_text("export MAIL_SERVER=fixture_example_Y71g\n", encoding="utf-8")
+        (self.project / ".env.local").write_text("MAIL_PASSWORD=fixture_local_N30m\n", encoding="utf-8")
         before = self.planted_key()
         self.success("document", offline=True)
-        html = (self.output / "technical-document.html").read_text()
+        html = (self.output / "technical-document.html").read_text(encoding="utf-8")
         sections = DocumentHtml(html).sections
         self.assertEqual(len(sections), 12)
         for i, title in enumerate(TECHNICAL_SECTIONS, 1):
@@ -87,7 +87,7 @@ class PairedDocumentsTests(DocumentCase):
             ("project-document-en-baseline-pdf.txt", normalize(" ".join(pages))),
         )
         for name, actual in cases:
-            self.assertEqual(actual, (FIXTURES / name).read_text().strip())
+            self.assertEqual(actual, (FIXTURES / name).read_text(encoding="utf-8").strip())
 
     def test_client_gets_one_count_and_technical_gets_problem_and_next_step(self):
         self.clean()
@@ -110,7 +110,7 @@ class PairedDocumentsTests(DocumentCase):
         for text in (detail, reason, next_step):
             self.assertNotIn(text, client)
         technical = normalize(" ".join(DocumentHtml(
-            (self.output / "technical-document.html").read_text()).body))
+            (self.output / "technical-document.html").read_text(encoding="utf-8")).body))
         for text in (detail, reason, next_step, "still open"):
             self.assertIn(text, technical)
 
@@ -120,6 +120,7 @@ class PairedDocumentsTests(DocumentCase):
         self.refuse("document", "translation-ar.json", "missing")
 
 
+    @unittest.skipUnless(POPPLER, NEEDS_POPPLER)
     def test_both_draws_eight_language_isolated_files_with_matching_sections(self):
         self.clean()
         self.choose("both")
@@ -142,11 +143,11 @@ class PairedDocumentsTests(DocumentCase):
             for locale, title, headings in (("en", en_title, en_titles), ("ar", ar_title, ar_titles)):
                 with self.subTest(stem=stem, locale=locale):
                     basename = stem + ("-ar" if locale == "ar" else "")
-                    source = (self.output / f"{basename}.html").read_text()
+                    source = (self.output / f"{basename}.html").read_text(encoding="utf-8")
                     markup = DocumentHtml(source)
                     mode = "-layout" if locale == "ar" else "-raw"
                     pdf = subprocess.check_output(
-                        ["pdftotext", mode, str(self.output / f"{basename}.pdf"), "-"],
+                        ["pdftotext", "-enc", "UTF-8", mode, str(self.output / f"{basename}.pdf"), "-"],
                         encoding="utf-8", timeout=20,
                     )
                     body = normalize(" ".join(markup.body))
@@ -208,9 +209,9 @@ class TranslationCommandTests(DocumentCase):
         self.success("translate", flags=self.language, offline=True)
 
     def translated_fixture(self):
-        fixture = json.loads((FIXTURES / "corner-bakery-translation-ar.json").read_text())
+        fixture = json.loads((FIXTURES / "corner-bakery-translation-ar.json").read_text(encoding="utf-8"))
         fixture["confirmed"] = False
-        current = json.loads(self.file.read_text())
+        current = json.loads(self.file.read_text(encoding="utf-8"))
         self.assertEqual([row["source"] for row in fixture["rows"]],
                          [row["source"] for row in current["rows"]])
         return fixture
@@ -219,7 +220,7 @@ class TranslationCommandTests(DocumentCase):
         self.file.write_text(json.dumps(content, ensure_ascii=False), encoding="utf-8")
 
     def test_prepare_names_sources_and_starts_unconfirmed_with_empty_rows(self):
-        content = json.loads(self.file.read_text())
+        content = json.loads(self.file.read_text(encoding="utf-8"))
         self.assertEqual(content["language"], "ar")
         self.assertIs(content["confirmed"], False)
         sources = [row["source"] for row in content["rows"]]
@@ -235,16 +236,16 @@ class TranslationCommandTests(DocumentCase):
         self.write_translation(fixture)
         self.refuse("document", "owner must confirm", "translation-ar.json")
         self.success("confirm-translation", flags=self.language)
-        self.assertIs(json.loads(self.file.read_text())["confirmed"], True)
+        self.assertIs(json.loads(self.file.read_text(encoding="utf-8"))["confirmed"], True)
         self.success("translate", flags=self.language)
-        self.assertIs(json.loads(self.file.read_text())["confirmed"], True)
+        self.assertIs(json.loads(self.file.read_text(encoding="utf-8"))["confirmed"], True)
         old = "A small bread menu and pickup order tool."
         new = "A bread menu for scheduling pickup orders."
-        self.prd.write_text(self.prd.read_text().replace(old, new))
+        self.prd.write_text(self.prd.read_text(encoding="utf-8").replace(old, new), encoding="utf-8")
         self.refuse("document", "source text changed", "translation-ar.json")
         self.refuse("confirm-translation", "source text changed", flags=self.language)
         self.success("translate", flags=self.language)
-        updated = json.loads(self.file.read_text())
+        updated = json.loads(self.file.read_text(encoding="utf-8"))
         self.assertIs(updated["confirmed"], False)
         previous = {row["source"]: row["text"] for row in fixture["rows"]}
         revised = {row["source"]: row["text"] for row in updated["rows"]}
@@ -254,7 +255,7 @@ class TranslationCommandTests(DocumentCase):
         self.assertEqual(revised, previous)
 
     def test_translation_guard_refuses_a_known_value_in_either_column(self):
-        original = json.loads(self.file.read_text())
+        original = json.loads(self.file.read_text(encoding="utf-8"))
         secret = self.planted_key()
         for field in ("source", "text"):
             with self.subTest(field=field):

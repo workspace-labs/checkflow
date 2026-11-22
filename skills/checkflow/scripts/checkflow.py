@@ -102,7 +102,15 @@ class CheckflowParser(argparse.ArgumentParser):
         self.exit(2, "1. Check the command, options and project folder. See checkflow.py --help.\n")
 
 
+def use_utf8_output():
+    # Windows pipes default to a legacy code page that cannot show Arabic messages.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="backslashreplace")
+
+
 def main():
+    use_utf8_output()
     parser = CheckflowParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     for name in ("start", "check", "report", "merge", "next-round", "preview", "choose", "document",

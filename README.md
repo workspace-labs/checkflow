@@ -12,7 +12,7 @@ The checkflow tool starts the check, validates the results file, writes the
 report and draws the documents. checkflow never fixes code, never deploys
 and never signs for the client.
 
-**Version 0.1.0**
+**Version 0.1.1**
 
 ## What you get
 
@@ -116,9 +116,8 @@ Record the location and setting name if there is one.
 Use Python 3.9 or newer. For `preview` and `document`, use a Python that has
 ReportLab installed. The check and report run with Python alone.
 
-The GitHub repository at `workspace-labs/checkflow` is planned. Use the
-first two install forms after it is published. If you have a local copy,
-you can run the example under [Use it](#use-it) now.
+The code is on GitHub at
+[workspace-labs/checkflow](https://github.com/workspace-labs/checkflow).
 
 **One-line install**
 
@@ -257,8 +256,10 @@ python3 -m unittest discover -s tests
 The suite checks refusal, results, reports, repeat checks and both document
 formats. It uses Corner Bakery, a sample project with planted mistakes.
 Fresh checkers also ran blind on a separate project copy. Drawing tests
-need ReportLab. Tests that read the PDF text also need Poppler's
-`pdftotext`. Tests skip when the tool they need is missing.
+need ReportLab. Tests that read the PDF text also need `pdftotext`. Two
+tests that read Arabic back from a PDF are written for Poppler's
+`pdftotext` and skip with another reader, such as the Xpdf one in Git for
+Windows. Tests skip when the tool they need is missing.
 
 ## Limits
 

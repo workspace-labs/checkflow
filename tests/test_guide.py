@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -46,6 +47,28 @@ class GuideTests(CheckflowCase):
         used.update(re.findall(r"(?m)^\|\s*`([\w-]+)[^`]*`\s*\|", usage))
         self.assertTrue(used)
         self.assertEqual(used - known, set(), "README commands missing from checkflow.py --help")
+
+    def test_arabic_messages_stay_readable_with_windows_output_settings(self):
+        script = (
+            "import sys\n"
+            "sys.path.insert(0, sys.argv[1])\n"
+            "import checkflow\n"
+            "def refuse(project, values):\n"
+            "    print('\\u0645\\u0633\\u0648\\u062f\\u0629')\n"
+            "    raise checkflow.Refusal('\\u064a\\u062a\\u062c\\u0627\\u0648\\u0632')\n"
+            "checkflow.start = refuse\n"
+            "sys.argv = ['checkflow.py', 'start', sys.argv[2]]\n"
+            "raise SystemExit(checkflow.main())\n"
+        )
+        run = subprocess.run(
+            [sys.executable, "-B", "-c", script, str(CLI.parent), str(self.project)],
+            capture_output=True, timeout=15,
+            env={**os.environ, "PYTHONUTF8": "0", "PYTHONPATH": "",
+                 "PYTHONIOENCODING": "cp1252:backslashreplace"},
+        )
+        self.assertEqual(run.returncode, 1, run.stderr)
+        self.assertEqual(run.stdout.decode("utf-8").strip(), "مسودة")
+        self.assertEqual(run.stderr.decode("utf-8").strip(), "1. يتجاوز")
 
     def test_start_and_report_say_when_they_succeed(self):
         fresh = self.scratch / "fresh"

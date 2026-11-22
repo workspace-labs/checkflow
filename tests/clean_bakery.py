@@ -42,7 +42,7 @@ def dates():
 
 
 def run(command, project):
-    result = subprocess.run(command, cwd=project, capture_output=True, text=True, timeout=20,
+    result = subprocess.run(command, cwd=project, capture_output=True, encoding="utf-8", errors="replace", timeout=20,
                             env={**os.environ, "GIT_CEILING_DIRECTORIES": str(project.parent)})
     if result.returncode:
         raise RuntimeError(f"Synthetic bakery setup failed: {result.stderr.strip()}")

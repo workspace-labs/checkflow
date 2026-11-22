@@ -133,8 +133,9 @@ def preview(project, values, args):
                                    language=language, source=source, preview=True)
     if draft:
         details = {**model.detail_values, "status": (words["Status"], words["Draft translation"])}
-        model = replace(model, cover_summary=(words["Draft translation"], *model.cover_summary),
-                        detail_values=details)
+        model = replace(model, detail_values=details)
+        # The page label takes no room from the content, so the draft mark cannot overflow a frame.
+        options = [(f"{label} · {words['Draft translation']}", choice) for label, choice in options]
     document_theme, _, pdf_document = renderers()
     theme = document_theme.load_theme(project, values)
     rendered = pdf_document.render_preview(model, theme, options)

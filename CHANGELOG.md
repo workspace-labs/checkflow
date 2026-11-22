@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.1 — 2026-11-22
+
+- Fix the draft Arabic preview, which was refused after choosing a first page. The draft mark now sits in the page label.
+- Print messages as UTF-8 on every platform, so Arabic stays readable in captured Windows output.
+- Keep fixtures and snapshots in LF with `.gitattributes`.
+- Make the tests read files and PDF text as UTF-8.
+- Skip two Arabic PDF text tests, with a clear reason, when `pdftotext` is not Poppler.
+- Say that the GitHub repository is live.
+
 ## 0.1.0 — 2026-11-22
 
 First release.

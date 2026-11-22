@@ -27,6 +27,18 @@ GROUP_COUNTS = {
 }
 
 
+def reads_with_poppler():
+    """Tell Poppler's pdftotext from Xpdf's, which shares its name and options."""
+    if not shutil.which("pdftotext"):
+        return False
+    version = subprocess.run(["pdftotext", "-v"], capture_output=True, timeout=10)
+    return b"poppler" in (version.stdout + version.stderr).lower()
+
+
+POPPLER = reads_with_poppler()
+NEEDS_POPPLER = "These Arabic PDF text checks are written for Poppler's pdftotext, and this reader is not Poppler."
+
+
 def snapshot(folder, exclude=()):
     """Record both empty directories and file bytes."""
     files = {}

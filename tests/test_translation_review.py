@@ -6,7 +6,7 @@ import shutil
 import unicodedata
 import unittest
 
-from checkflow_case import FIXTURES
+from checkflow_case import FIXTURES, NEEDS_POPPLER, POPPLER
 from test_project_document import DocumentCase
 
 
@@ -48,7 +48,7 @@ class TranslationReviewTests(DocumentCase):
         self.refuse("document", "owner must confirm", "translation-ar.json")
         self.success("confirm-translation", flags=self.language)
         self.success("document")
-        self.assertIn(row["text"], (self.output / "project-document-ar.html").read_text())
+        self.assertIn(row["text"], (self.output / "project-document-ar.html").read_text(encoding="utf-8"))
 
     def test_source_edits_and_old_confirmations_without_a_digest_are_refused(self):
         self.clean()
@@ -66,7 +66,7 @@ class TranslationReviewTests(DocumentCase):
         self.refuse("document", "owner must confirm", "translation-ar.json")
 
     @unittest.skipUnless(importlib.util.find_spec("reportlab"), "ReportLab is required to draw.")
-    @unittest.skipUnless(shutil.which("pdftotext"), "Poppler is required to inspect the preview.")
+    @unittest.skipUnless(POPPLER, NEEDS_POPPLER)
     def test_unconfirmed_arabic_preview_before_choosing_does_not_publish_delivery(self):
         self.clean(choose=False)
         choice = self.output / "first-page.json"
@@ -89,3 +89,18 @@ class TranslationReviewTests(DocumentCase):
         self.success("translate", flags=self.language)
         self.fill_draft()
         self.refuse("document", "owner must confirm")
+
+    @unittest.skipUnless(importlib.util.find_spec("reportlab"), "ReportLab is required to draw.")
+    def test_draft_arabic_preview_fits_every_frame_after_choosing(self):
+        self.clean()
+        self.choose("both")
+        self.success("translate", flags=self.language)
+        self.fill_draft()
+        for extra in (("--frame", "register"), ("--frame", "band"), ("--frame", "side"), ("--details", "")):
+            with self.subTest(extra=extra):
+                self.success("preview", flags=(*self.language, *extra))
+                if POPPLER:
+                    pages = self.pdf_pages("first-page-preview")
+                    self.assertEqual(len(pages), 3)
+                    for page in pages:
+                        self.assertIn("مسودة", unicodedata.normalize("NFKC", page))

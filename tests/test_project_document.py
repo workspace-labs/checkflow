@@ -152,7 +152,7 @@ class DocumentCase(CheckflowCase):
         file = self.output / f"{name}.pdf"
         self.assertTrue(file.read_bytes().startswith(b"%PDF"))
         result = subprocess.run(
-            ["pdftotext", "-raw", str(file), "-"], capture_output=True, encoding="utf-8",
+            ["pdftotext", "-enc", "UTF-8", "-raw", str(file), "-"], capture_output=True, encoding="utf-8",
             timeout=20, check=True,
         )
         return [page for page in result.stdout.split("\f") if page.strip()]

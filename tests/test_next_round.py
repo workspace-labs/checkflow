@@ -20,7 +20,8 @@ class NextRoundTests(CheckflowCase):
             cwd=self.project,
             env={**os.environ, "GIT_CEILING_DIRECTORIES": str(self.scratch)},
             capture_output=True,
-            text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=15,
         )
         self.assertEqual(patch.returncode, 0, patch.stdout + patch.stderr)
@@ -38,7 +39,8 @@ class NextRoundTests(CheckflowCase):
             [sys.executable, "-B", "-m", "unittest", "discover"],
             cwd=self.project,
             capture_output=True,
-            text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=15,
         )
         self.assertEqual(run.returncode, 0, run.stdout + run.stderr)

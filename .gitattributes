@@ -1,0 +1,7 @@
+* text=auto eol=lf
+*.pdf binary
+*.png binary
+*.ttf binary
+*.zip binary
+# The font licence is kept byte for byte as its authors published it.
+skills/checkflow/assets/fonts/OFL-Alexandria.txt -text
