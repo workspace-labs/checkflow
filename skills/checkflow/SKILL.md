@@ -1,6 +1,6 @@
 ---
 name: checkflow
-description: 'Checkflow never deploys. Use it on a finished build before deploy or delivery when the owner asks to check the project or asks if it is ready for the client. It does not review a single change or task, deploy the project, or fix it.'
+description: 'Checkflow never deploys. Use it on a finished build before deploy or delivery when the owner asks to check the project or asks if it is ready for the client. Use it once more after the owner releases, when asked to check the copy users receive. It does not review a single change or task, deploy the project, or fix it.'
 ---
 
 # Check the finished project
@@ -96,6 +96,62 @@ block delivery.
    check again. Keep the owner's decisions. Update the round on a point or
    check when you write fresh evidence. Send the new full check to the owner.
    Stop if the owner ends the check.
+
+## After the release
+
+Use this section on its own. Run it only when the owner says the release is
+done and asks for this check, and the project's check before release was
+Clean, including Clean with problems accepted by the owner.
+
+Checkflow never deploys or releases. Never publish, upload, install for a user,
+roll back, release again or fix anything.
+
+1. Get the copy the way a user gets it. Use the download, installed app, live
+   address or published package. If the owner has to install it, wait for the
+   owner to do it.
+2. Find the record that the check before release used for “The copy that will
+   go live is the copy that was tested”. When users receive a file, compare its
+   checksum with the checksum in that record. Otherwise compare the version
+   and commit reported by the running copy with the version and commit in the
+   record. If no record identifies the tested copy or the comparison cannot
+   be made, record `Could not check`. Never guess.
+3. If the copy matches, try the project's main task once on that copy with
+   trial data only.
+   Ask the owner before any trial that would store data, send anything or
+   charge a payment in the live system, or reach a real person, and try only
+   what the owner approves within the limits above. Without that approval,
+   record `Could not check` and name the trial the owner must approve or run.
+
+If any step fails or cannot be done, skip the remaining trials.
+
+For every outcome, write the result in `docs/checkflow/after-release.md`, tell
+the owner and stop. The owner decides the next step. Never edit `check.json`
+or `full-check.md` for this check. The verdict before release stays as it was.
+
+Add one dated entry per release at the top of the record, newest first. Keep
+passwords, keys, tokens and real user data out of it. Use this shape and leave
+any field you could not verify blank.
+
+```markdown
+## YYYY-MM-DD
+
+- Released version:
+- Where the copy came from:
+- Record compared with:
+- Identity found on the received copy:
+- Comparison (same or different):
+- What was tried and whether it worked:
+- Checked by:
+- Result:
+```
+
+Use one of these results.
+
+- `Matches and works` when the copy matches and the main task works.
+- `Does not match` when the comparison shows a difference.
+- `Does not work` when the copy matches and the main task fails.
+- `Could not check` when a step could not be done. On the result line, give
+  the reason and say exactly what the owner must supply.
 
 ## Prepare the project and technical documents
 

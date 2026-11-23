@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0 — 2026-11-23
+
+- When the owner asks after releasing a project whose check was Clean (including Clean with problems accepted by the owner), check the copy users receive and record the result in `docs/checkflow/after-release.md`.
+
 ## 0.2.0 — 2026-11-22
 
 - Place checkflow third in the whole-project workflow, after project-docs approval and the build from approved documents and the plan. Deployment and handover wait for a clean check.

@@ -48,6 +48,51 @@ class GuideTests(CheckflowCase):
         self.assertTrue(used)
         self.assertEqual(used - known, set(), "README commands missing from checkflow.py --help")
 
+    def test_skill_records_the_after_release_check_separately(self):
+        guide = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+        before, heading, after = guide.partition("\n## After the release\n")
+        self.assertTrue(heading, "SKILL.md needs an After the release section")
+        self.assertRegex(before, r"(?m)^7\. ")
+        section, next_heading, _ = after.partition("\n## Prepare the project and technical documents\n")
+        self.assertTrue(next_heading, "The after-release section must precede document preparation")
+        self.assertIn("`docs/checkflow/after-release.md`", section)
+        self.assertIn("Checkflow never deploys or releases.", section)
+        self.assertEqual(
+            re.findall(r"(?m)^- `([^`]+)` ", section),
+            ["Matches and works", "Does not match", "Does not work", "Could not check"],
+        )
+        with self.subTest(finding="F1"):
+            trial = " ".join(section.partition("\n3. ")[2].partition("\n\n")[0].split())
+            self.assertIn(
+                "Ask the owner before any trial that would store data, send anything or charge "
+                "a payment in the live system, or reach a real person, and try only what the "
+                "owner approves within the limits above.",
+                trial,
+            )
+            self.assertIn(
+                "Without that approval, record `Could not check` and name the trial the owner "
+                "must approve or run.",
+                trial,
+            )
+        with self.subTest(finding="F2"):
+            self.assertIn(
+                "the project's check before release was Clean, including Clean with problems "
+                "accepted by the owner.",
+                " ".join(section.split()),
+            )
+
+    def test_skill_description_mentions_the_after_release_check(self):
+        guide = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+        line = guide.splitlines()[2]
+        self.assertTrue(line.startswith("description: "))
+        description = line.removeprefix("description: ").strip("'\"")
+        self.assertTrue(description.startswith("Checkflow never deploys."))
+        self.assertRegex(description.casefold(), r"\bafter (?:the owner releases|(?:the )?release)\b")
+
+    def test_readme_names_the_after_release_check(self):
+        guide = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("## After the release", guide.splitlines())
+
     def test_arabic_messages_stay_readable_with_windows_output_settings(self):
         script = (
             "import sys\n"

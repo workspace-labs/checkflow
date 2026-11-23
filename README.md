@@ -12,7 +12,7 @@ The checkflow tool starts the check, validates the results file, writes the
 report and draws the documents. checkflow never fixes code, never deploys
 and never signs for the client.
 
-**Version 0.2.0**
+**Version 0.3.0**
 
 ## What you get
 
@@ -64,6 +64,15 @@ the checker offers to bring in a second fresh checker before the owner decides
 any changes. If the owner agrees, the merged report uses the worse result
 for each disagreement, keeps both proofs and includes the changes and problems
 from both checks.
+
+## After the release
+
+After you release a project whose check was Clean (including Clean with
+problems accepted by the owner), ask for the after-release check. The checker
+compares the copy users receive with the record of the tested copy and tries
+the project's main task with trial data. The checker writes the result in
+`docs/checkflow/after-release.md` and tells you what happened. The earlier
+verdict stays as it was.
 
 ## The two documents
 
