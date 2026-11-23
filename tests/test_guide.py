@@ -17,7 +17,8 @@ class GuideTests(CheckflowCase):
         lines = guide.splitlines()
         self.assertIn(
             "![checkflow: read what was approved, check the client points and the project, "
-            "fix with the builder, deliver a client document and a technical document]"
+            "fix with the builder, deliver a client document and a technical document, "
+            "check the released copy]"
             "(media/checkflow-hero.png)",
             lines,
             "README picture or alt text changed",

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 — 2026-11-23
+
+- Show the after-release check in the README picture and in the workflow PDF.
+
 ## 0.3.0 — 2026-11-23
 
 - When the owner asks after releasing a project whose check was Clean (including Clean with problems accepted by the owner), check the copy users receive and record the result in `docs/checkflow/after-release.md`.

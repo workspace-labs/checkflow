@@ -1,6 +1,6 @@
 # checkflow
 
-![checkflow: read what was approved, check the client points and the project, fix with the builder, deliver a client document and a technical document](media/checkflow-hero.png)
+![checkflow: read what was approved, check the client points and the project, fix with the builder, deliver a client document and a technical document, check the released copy](media/checkflow-hero.png)
 
 *Sample pages. Your documents follow your project's own design.*
 
@@ -12,7 +12,7 @@ The checkflow tool starts the check, validates the results file, writes the
 report and draws the documents. checkflow never fixes code, never deploys
 and never signs for the client.
 
-**Version 0.3.0**
+**Version 0.3.1**
 
 ## What you get
 
