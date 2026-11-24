@@ -81,6 +81,28 @@ class GuideTests(CheckflowCase):
                 "accepted by the owner.",
                 " ".join(section.split()),
             )
+        selection, fetch_step, comparison = section.partition("\n2. Get the copy the way a user gets it.")
+        self.assertTrue(fetch_step, "The received copy is fetched in step 2")
+        self.assertIn(
+            "Settle which Clean round the owner chose for this target before fetching the copy.",
+            " ".join(selection.split()),
+        )
+        self.assertIn(
+            "Compare its identity with the value saved for this target in the selected round's `reason`.",
+            " ".join(comparison.partition("\n3. ")[0].split()),
+        )
+
+    def test_second_check_resolves_release_identity_disagreements_before_merge(self):
+        guide = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+        step = " ".join(guide.partition("\n6. ")[2].partition("\n7. ")[0].split())
+        before_merge, merge, _ = step.partition("Run `merge <project>`")
+        self.assertTrue(merge, "Step 6 must run merge after resolving disagreements")
+        self.assertIn("If a target is missing or its identities differ, pause.", before_merge)
+        self.assertIn("Give each checker only the disputed target's name.", before_merge)
+        self.assertIn(
+            "Run `merge <project>` only after both checkers agree on the identity of every intended target.",
+            step,
+        )
 
     def test_skill_description_mentions_the_after_release_check(self):
         guide = (SKILL / "SKILL.md").read_text(encoding="utf-8")
@@ -181,7 +203,16 @@ class GuideTests(CheckflowCase):
         heading = f"- **{name}**\n  - How to check it. "
         self.assertEqual(guide.partition(heading)[2].partition("\n")[0], rule)
         self.assertIn("a record already kept with the project", rule)
-        self.assertIn("by version, commit or checksum", rule)
+        for requirement in (
+            "one file, use the SHA-256 of the final file",
+            "a repository delivered as source, use the full commit",
+            "a copied folder, use the SHA-256 of the retained list",
+            "every other delivery, use the version and full source commit",
+            "In the reason, record each target, its actual identity values, the record location and the finding.",
+            "pass only when every intended target matches its passing record",
+            "In every later round, retry this check and set its round to the current project round.",
+        ):
+            self.assertIn(requirement, rule)
         self.assertIn("ties that copy to a successful test run", rule)
         self.assertIn("supporting evidence only and cannot make this check pass", rule)
         self.assertIn("name the record the owner must supply in the reason", rule)

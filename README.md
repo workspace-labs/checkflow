@@ -12,7 +12,7 @@ The checkflow tool starts the check, validates the results file, writes the
 report and draws the documents. checkflow never fixes code, never deploys
 and never signs for the client.
 
-**Version 0.3.1**
+**Version 0.4.0**
 
 ## What you get
 
@@ -67,9 +67,15 @@ from both checks.
 
 ## After the release
 
+After a Clean check and before publishing or installing the copy for users,
+write down which Clean round you choose for each delivery target in your
+release or handover note. Include who chose it and the date. Add the time
+when the date alone leaves the order unclear. Keep the round's full report
+with its test evidence so the checker can verify the choice later.
+
 After you release a project whose check was Clean (including Clean with
 problems accepted by the owner), ask for the after-release check. The checker
-compares the copy users receive with the record of the tested copy and tries
+compares the copy users receive with the identity saved in your chosen round and tries
 the project's main task with trial data. The checker writes the result in
 `docs/checkflow/after-release.md` and tells you what happened. The earlier
 verdict stays as it was.

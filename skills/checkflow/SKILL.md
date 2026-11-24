@@ -88,13 +88,28 @@ block delivery.
    If this tool has no fresh helpers, ask the owner to open a new session for
    the second check. The first checker never acts as the second checker.
    Place the finished result at `docs/checkflow/second-check.json` in the
-   original project. Run `merge <project>`, then run `report <project>` and
-   give the owner the merged full check before recording decisions. Keep the
-   second check and first-check archive so the report can show disagreements.
+   original project. Compare the approved list of release targets with both
+   checkers' lists and the saved identity values for each target.
+   If a target is missing or its identities differ, pause.
+   Give each checker only the disputed target's name. Each independently
+   rechecks the same candidate and corrects its own release row, labelling
+   its first reading `superseded` and its final identity `current` in the
+   reason. The second checker supplies its corrected `second-check.json`.
+   Run `merge <project>` only after both checkers agree on the identity of
+   every intended target. Their wording and evidence paths can differ.
+   Run `report <project>` and give the owner the merged full check before
+   recording decisions. Keep the second check and first-check archive so the
+   report can show disagreements.
 7. The owner decides every change. The builder makes any fixes. After the
    builder hands the project back, run `next-round` in place of `start`, then
    check again. Keep the owner's decisions. Update the round on a point or
-   check when you write fresh evidence. Send the new full check to the owner.
+   check when you write fresh evidence. Retry the release identity check in
+   every later round, even for the same candidate. Compare each target with
+   its passing test record and set the release row's `round` to the current
+   project round. If a fix, acceptance-test change, repackaging or re-signing
+   changes the candidate after Clean, the owner requests `next-round` before
+   delivery. The new copy needs its own passing evidence. Send the new full
+   check to the owner.
    Stop if the owner ends the check.
 
 ## After the release
@@ -106,29 +121,55 @@ Clean, including Clean with problems accepted by the owner.
 Checkflow never deploys or releases. Never publish, upload, install for a user,
 roll back, release again or fix anything.
 
-1. Get the copy the way a user gets it. Use the download, installed app, live
-   address or published package. If the owner has to install it, wait for the
-   owner to do it.
-2. Find the record that the check before release used for “The copy that will
-   go live is the copy that was tested”. When users receive a file, compare its
-   checksum with the checksum in that record. Otherwise compare the version
-   and commit reported by the running copy with the version and commit in the
-   record. If no record identifies the tested copy or the comparison cannot
-   be made, record `Could not check`. Never guess.
-3. If the copy matches, try the project's main task once on that copy with
-   trial data only.
+1. Settle which Clean round the owner chose for this target before fetching
+   the copy. Read the owner's release or handover note. After the check was
+   Clean and before publication or installation for users, the owner chose
+   the round for each target. The note gives the target, round, date, and
+   who chose it, with the time when the date alone cannot show the order.
+   The builder may have written down that decision at the release step.
+   Checkflow only reads the note. If several Clean rounds could apply and
+   the note is missing, undated, late or unclear about the order, ask the
+   owner which round they chose before delivery. Record `Could not check`
+   until they identify their original choice. Date their clarification.
+   Confirm the selected round number and Clean verdict in its
+   `docs/checkflow/full-check.md`. For an earlier round, use a kept copy or
+   the Git history of that report. The archived JSON has no verdict. If
+   the verdict cannot be shown, record `Could not check` and request the
+   round's report. Read the release check's reason from `check.json` for
+   the current round, or `docs/checkflow/check.round-N.json` for an earlier
+   round, using its number for N.
+2. Get the copy the way a user gets it. If the owner needs to install it,
+   wait for the owner. Compare its identity with the value saved for this
+   target in the selected round's `reason`. Use the applicable identity
+   from [the release check](references/project-checks.md#the-release).
+   For a copied folder, apply the recorded recipe at the destination.
+   Use the retained list to name missing, added or changed files.
+   Check the cited record still supports that identity and its passing
+   test. Record any discrepancy. A demonstrated difference from the saved
+   identity gives `Does not match`, even if edited release notes now name
+   the received copy. A missing, unreadable or ambiguous identity gives
+   `Could not check`, including a link alone or unresolved conflicting
+   identities in a merged result. If identities match but the original
+   passing evidence cannot be confirmed, record `Could not check` and
+   name the evidence needed before trying the main task.
+3. If the copy matches and its passing evidence is confirmed, try the
+   project's main task once on that copy with trial data only.
    Ask the owner before any trial that would store data, send anything or
    charge a payment in the live system, or reach a real person, and try only
    what the owner approves within the limits above. Without that approval,
    record `Could not check` and name the trial the owner must approve or run.
 
-If any step fails or cannot be done, skip the remaining trials.
+If any step fails or cannot be done, skip the remaining trials for that target.
 
-For every outcome, write the result in `docs/checkflow/after-release.md`, tell
-the owner and stop. The owner decides the next step. Never edit `check.json`
-or `full-check.md` for this check. The verdict before release stays as it was.
+For every outcome, write the result in `docs/checkflow/after-release.md`.
+Tell the owner the results for the requested targets and stop. The owner
+decides the next step. Never edit `check.json` or `full-check.md` for this
+check. The verdict before release stays as it was.
 
-Add one dated entry per release at the top of the record, newest first. Keep
+Add one dated entry per release and target at the top, newest first. Name
+the target and delivery channel under `Where the copy came from`. Cite
+the selected round and its evidence location under `Record compared with`.
+Record the received identity, comparison and any evidence gap. Keep
 passwords, keys, tokens and real user data out of it. Use this shape and leave
 any field you could not verify blank.
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0 — 2026-11-24
+
+- Record each delivery target's tested identity and evidence in every check round.
+  Independent checkers resolve identity disagreements before merging. After release,
+  compare each target with the Clean round the owner chose before delivery.
+- A 0.3.x Clean record containing only a link keeps its dated verdict. A later
+  check of the delivered copy gives `Could not check` until a fresh round
+  records the tested identity for that release.
+
 ## 0.3.1 — 2026-11-23
 
 - Show the after-release check in the README picture and in the workflow PDF.
